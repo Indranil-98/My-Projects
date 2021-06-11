@@ -1,0 +1,114 @@
+import csv
+import matplotlib.pyplot as plt
+from collections import Counter
+
+def list_gen():
+    with open ("pseudo_facebook.csv") as f:
+        reader=csv.DictReader(f)
+        #dict={}
+        list=[]
+        for i in reader:
+            list.append(i["age"])
+    return list
+    #creating list of all ages
+
+def dict_gen():
+    dict = {}
+    with open("pseudo_facebook.csv") as f:
+        reader2 = csv.DictReader(f)
+        for line in reader2:
+            dict[line["age"]]=0
+    return dict
+    #creating dict of ages with value=0
+
+def dict_list_gen(a,b):
+    for key in a:
+        b[key]=b[key]+1
+    return b
+    #assigning count of ages to dict
+
+def max(dict):
+    max=0
+    ages=[]
+    for keys in dict:
+        if dict[keys]>=max:
+            max=dict[keys]
+    for key in dict:
+        if dict[key]==max:
+            ages.append(key)
+    return(ages) #returning the age which has highest frequncy
+
+def tenure(dictionary1,dic2):
+    my=dict(dictionary1) #with number of people of an age group
+    my2=dict(dic2) #blanck dic with
+    my3=dict(my2)
+    with open("pseudo_facebook.csv") as f:
+        reader21 = csv.DictReader(f)
+        for line in reader21:
+            for i in my2:
+                if line["age"]==i and line["tenure"]!="NA":
+                    my2[i]+=int(line["tenure"])
+    return (my2) #tenure dictioinary
+
+def gender():
+    with open("pseudo_facebook.csv") as f:
+        reader3 = csv.DictReader(f)
+        dict_gen={"Male":0, "Female":0}
+        for line in reader3:
+            if line["gender"]=="male":
+                dict_gen["Male"]+= 1
+            else:
+                dict_gen["Female"] += 1
+        return dict_gen #gender dictionary with frequency
+
+def plot_gen(dict):
+    x=list(dict.keys())
+    y=list(dict.values())
+    #sns.barplot(x='x', y='y', data=dict)
+    barlist=plt.bar(x, y, align='center')
+    barlist[0].set_color('r')
+    plt.show() #plotting gender bar-plot
+
+def ten_counter(dict,ten):
+
+    temp1 = Counter(dict)
+    temp2 = Counter(ten)
+    res = Counter({key: temp2[key] / temp1[key] for key in temp2})
+    max_dic={}
+    max=0
+    max_val=0
+    years=0
+    for keys in res:
+        if res[keys]>=max:
+            max=round(res[keys])
+            max_val=keys
+    y=max/365
+    years=round(y)
+
+    a="------->>>>The most active age group based on years of usage is: "+str(max_val)+" with "+str(max)+" days which is equal to "+str(years)+" years"
+    return a
+def main():
+    print("Hello! Today I am analysing Facebook Dataset")
+    print("Questions I am answering in this short project........")
+    print("1. Which age group is most active in my Facebook dataset based on user count?")
+    print("2.What is the gender distribution of the users? (Please see the bar graph)")
+    print("3.Which age group is most active in terms of long term usage?")
+    user_input=input('Please type "start" to run the program: ')
+    if user_input=="start" or user_input=="Start":
+        a=list_gen()
+        b=dict_gen()
+        dict=dict_list_gen(a,b)
+        ages=max(dict)
+        for i in ages:
+            print("------->>>>Most active age group based on user count is : "+str(i))
+        d=gender()
+        plot_gen(d)
+        ten=tenure(dict, b)
+        ten_count=ten_counter(dict,ten)
+        print(ten_count)
+        print("Thank You for viewing my project!")
+        print("Stay Safe and Have a Nice Day!!!")
+
+if __name__ == "__main__":
+    main()
+
